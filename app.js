@@ -21,7 +21,7 @@ let E=JSON.parse(localStorage.getItem(K)||"{}"),V=new Date(),S="",P="";V.setDate
   let k=key(d),hn=HOLIDAYS[k]||"";
   let x=document.createElement("div");
   x.className=`day ${d.getMonth()!=m?"out":""} ${d.getDay()==0?"sun":d.getDay()==6?"sat":""} ${hn?"holiday-date":""}`;
-  x.innerHTML=`<div class="datehead"><span class="n">${d.getDate()}</span>${hn?`<span class="holiday-name">${hn}</span>`:""}</div>`;
+  x.innerHTML=`<div class="datehead"><span class="n">${d.getDate()}</span></div>`;
   (E[k]||[]).forEach(e=>{let z=document.createElement("div");z.className=`ev ${col(e.t)}`;z.textContent=e.x;x.appendChild(z)});
   x.onclick=()=>open(k,d);c.appendChild(x)
  }
@@ -33,4 +33,21 @@ function open(k,d){S=k;$("#date").textContent=`${d.getFullYear()}年${d.getMonth
  items();
  $("#input").classList.add("hide");
  $("#back").classList.add("hide");
-}function items(){let b=$("#items");b.innerHTML="";(E[S]||[]).forEach(e=>{let r=document.createElement("div");r.className="row";r.innerHTML=`<div class="ev ${col(e.t)}">${e.x}</div><button class="del">削除</button>`;r.querySelector("button").onclick=()=>{E[S]=E[S].filter(q=>q.id!==e.id);if(!E[S].length)delete E[S];persist();render();items()};b.appendChild(r)})}document.querySelectorAll(".quick button").forEach(b=>b.onclick=()=>{let t=b.dataset.t;if(t==="off")return add(t,"ー");if(t==="holiday")return add(t,"休み");P=t;$("#txt").value="";$("#txt").placeholder=t==="work"?"仕事（数字・漢字）":"私用の予定";$("#input").classList.remove("hide");$("#txt").focus()});$("#save").onclick=()=>{let x=$("#txt").value.trim();if(x){add(P,x);$("#input").classList.add("hide")}};$("#close").onclick=()=>$("#back").classList.add("hide");$("#prev").onclick=()=>{V.setMonth(V.getMonth()-1);render()};$("#next").onclick=()=>{V.setMonth(V.getMonth()+1);render()};$("#today").onclick=()=>{V=new Date();V.setDate(1);render()};render();
+}function items(){let b=$("#items");b.innerHTML="";(E[S]||[]).forEach(e=>{let r=document.createElement("div");r.className="row";r.innerHTML=`<div class="ev ${col(e.t)}">${e.x}</div><button class="del">削除</button>`;r.querySelector("button").onclick=()=>{E[S]=E[S].filter(q=>q.id!==e.id);if(!E[S].length)delete E[S];persist();render();items()};b.appendChild(r)})}document.querySelectorAll(".quick button").forEach(b=>b.onclick=()=>{let t=b.dataset.t;if(t==="off")return add(t,"ー");if(t==="holiday")return add(t,"休み");P=t;$("#txt").value="";$("#txt").placeholder=t==="work"?"仕事（数字・漢字）":"私用の予定";$("#input").classList.remove("hide");$("#txt").focus()});$("#save").onclick=()=>{let x=$("#txt").value.trim();if(x){add(P,x);$("#input").classList.add("hide")}};$("#close").onclick=()=>$("#back").classList.add("hide");$("#prev").onclick=()=>{V.setMonth(V.getMonth()-1);render()};$("#next").onclick=()=>{V.setMonth(V.getMonth()+1);render()};
+
+let swipeStartX=0,swipeStartY=0;
+const cal=$("#cal");
+cal.addEventListener("touchstart",e=>{
+ const t=e.changedTouches[0];
+ swipeStartX=t.clientX;
+ swipeStartY=t.clientY;
+},{passive:true});
+cal.addEventListener("touchend",e=>{
+ const t=e.changedTouches[0];
+ const dx=t.clientX-swipeStartX;
+ const dy=t.clientY-swipeStartY;
+ if(Math.abs(dx)>=60 && Math.abs(dx)>Math.abs(dy)*1.3){
+   V.setMonth(V.getMonth()+(dx<0?1:-1));
+   render();
+ }
+},{passive:true});$("#today").onclick=()=>{V=new Date();V.setDate(1);render()};render();

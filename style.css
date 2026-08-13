@@ -4,8 +4,6 @@
 .holiday-name{color:#e44;font-size:9px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .out .holiday-name{opacity:.45}
 
-/* 祝日：日付と祝日名を赤文字で表示 */
-.day.holiday-date .n,
-.day.holiday-date .holiday-name {
-  color: #e44 !important;
-}
+/* 祝日は名前を表示せず、日付だけ赤 */
+.day.holiday-date .n{color:#ef4444!important}
+.holiday-name{display:none!important}
